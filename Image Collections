@@ -1,0 +1,63 @@
+// Working with Image Collections
+// Information:
+// An Image Collection is a dartaset of images taken at 
+// different times and locations usually from the same 
+// imagery provider. 
+
+// datasets: https://developers.google.com/earth-engine/datasets
+
+// Working with Sentinel - 2 Level 2A
+
+// Select map center location
+var geometry = ee.Geometry.Point([-112, 43.75])
+Map.centerObject(geometry, 8)
+
+// call sentinel 2 level 2A - Multispectral
+var ID = ee.ImageCollection("COPERNICUS/S2");
+
+// filter metadata; imagery cloudiness to 30%
+var filtered = ID.filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 30))
+
+// filter by data
+var filtered = ID.filter(ee.Filter.date("2019-01-01", "2020-01-01"))
+
+// filter by location
+var filtered = ID.filter(ee.Filter.bounds(geometry))
+
+print(filtered.size())
+
+var rgbVis = {
+  min: 0.0,
+  max: 3000,
+  bands: ['B4', 'B3', 'B2']
+}
+
+Map.addLayer(filtered, rgbVis, "Filtered")
+
+
+// Landsat, by copying image collection code firectly from web (super easy)
+
+// map center - Grand canyon village
+var geometry = ee.Geometry.Point([-112.1, 36.05])
+Map.centerObject(geometry, 10)
+
+var dataset = ee.ImageCollection('LANDSAT/LC08/C02/T1_L2')
+    .filterDate('2021-05-01', '2021-06-01');
+
+// Applies scaling factors.
+function applyScaleFactors(image) {
+  var opticalBands = image.select('SR_B.').multiply(0.0000275).add(-0.2);
+  var thermalBands = image.select('ST_B.*').multiply(0.00341802).add(149.0);
+  return image.addBands(opticalBands, null, true)
+              .addBands(thermalBands, null, true);
+}
+
+dataset = dataset.map(applyScaleFactors);
+
+var visualization = {
+  bands: ['SR_B7', 'SR_B6', 'SR_B2'],
+  min: 0.0,
+  max: 0.3,
+};
+
+Map.addLayer(dataset, visualization, 'True Color (432)');
