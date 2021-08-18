@@ -1,0 +1,29 @@
+// Earth Engine Basics - variables, lists, dictionaries, functions
+
+// Variables var (then variable name)
+var city = "Kabul";
+var country = "Afghanistan";
+print(city, country);
+
+var population = 4500000
+print(population);
+
+// List ['x']
+var majorcities = ["Phoenix", "Salt Lake", "Sacramento"];
+print(majorcities);
+
+// Dictionary (stores data of variables)
+var citydata = {
+  "city": city,
+  "population":4500000,
+  "elevation": 4000
+};
+print(citydata);
+
+
+// Function
+var greet = function(name) {
+  return "Hello " + name;
+};
+
+print(greet("World"));
